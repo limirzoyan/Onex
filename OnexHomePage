@@ -1,0 +1,106 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class OnexTest2 extends BaseTestOnex{
+
+    @Test
+           /* driver.navigate().refresh();
+            driver.navigate().back();
+            driver.navigate().forward();
+            String expectedTitleOfHomePage = "ONEX - You Shop. We Ship.";
+            String actualTitleOfHomePage = driver.getTitle();
+            String expectedUrlOfHomePage = "https://onex.am/";
+            String actualUrlOfHomePage = driver.getCurrentUrl();
+            Assert.assertEquals(expectedTitleOfHomePage, actualTitleOfHomePage);
+            Assert.assertEquals(expectedUrlOfHomePage, actualUrlOfHomePage); */
+
+    public void footerLinksTest() throws InterruptedException {
+
+        Assert.assertEquals("https://onex.am/hy/pages/onexprime", getFooterHyperLink("PRIME ԿԱՐԳԱՎԻՃԱԿ"));
+        Assert.assertEquals("https://onex.am/hy/pages/pickuppoints", getFooterHyperLink("ՍՏԱՑՄԱՆ ՎԱՅՐԵՐ"));
+    }
+
+    @Test
+    public void footerLinksTestRus() throws InterruptedException {
+        driver.get("https://onex.am/ru");
+        Assert.assertEquals("https://onex.am/ru/pages/onexprime", getFooterHyperLink("PRIME ԿԱՐԳԱՎԻՃԱԿ"));
+        Assert.assertEquals("https://onex.am/ru/pages/pickuppoints", getFooterHyperLink("ՍՏԱՑՄԱՆ ՎԱՅՐԵՐ"));
+    }
+
+    @Test
+    public void footerLinksTestEn() throws InterruptedException {
+        driver.get("https://onex.am/en");
+        Assert.assertEquals("https://onex.am/en/pages/onexprime", getFooterHyperLink("PRIME ԿԱՐԳԱՎԻՃԱԿ"));
+        Assert.assertEquals("https://onex.am/en/pages/pickuppoints", getFooterHyperLink("ՍՏԱՑՄԱՆ ՎԱՅՐԵՐ"));
+    }
+
+    @Test
+    public void clickOnLogInRegisterButtons() throws InterruptedException {
+        driver.get("https://onex.am/");
+        clickOnLoginRegister("ՄՈՒՏՔ");
+        Assert.assertEquals("https://onex.am/user/login", driver.getCurrentUrl());
+        clickOnLoginRegister("ԳՐԱՆՑՎԵԼ");
+        Assert.assertEquals("https://onex.am/user/register", driver.getCurrentUrl());
+    }
+
+    @Test
+    public void dropDownMenuTest() throws InterruptedException {
+        driver.get("https://onex.am/");
+        Assert.assertEquals(getDropdownMenuLink(1), "https://onex.am/hy/pages/onlineshopping");
+        Assert.assertEquals(getDropdownMenuLink(2), "https://onex.am/hy/pages/importrussia");
+        Assert.assertEquals(getDropdownMenuLink(8), "https://onex.am/hy/pages/exportrussia");
+        Assert.assertEquals(getDropdownMenuLink(10), "https://onex.am/hy/pages/exportdocuments");
+        Assert.assertEquals(getDropdownMenuLink(14), "https://onex.am/hy/pages/business");
+        //ATTENTION-WRONG LOOP
+    }
+
+    private String getFooterHyperLink(String itemName) throws InterruptedException {
+        WebElement footerList = driver.findElement(By.cssSelector(".list-unstyled.link-list"));
+        List<WebElement> links = footerList.findElements(By.tagName("a"));
+        itemName = itemName.toUpperCase();
+        switch (itemName) {
+            case "PRIME ԿԱՐԳԱՎԻՃԱԿ":
+                return links.get(0).getAttribute("href");
+            case "ՍՏԱՑՄԱՆ ՎԱՅՐԵՐ":
+                return links.get(1).getAttribute("href");
+            default:
+                return "Wrong itemName: " + itemName;
+        }
+    }
+
+    private void clickOnLoginRegister(String buttonName) throws InterruptedException {
+        WebElement menuButtonsList = driver.findElement(By.cssSelector(".list-inline.right-topbar.pull-right"));
+        List<WebElement> url = menuButtonsList.findElements(By.tagName("a"));
+        buttonName = buttonName.toUpperCase();
+        switch (buttonName) {
+            case "ՄՈՒՏՔ":
+                url.get(0).click();
+                break;
+            case "ԳՐԱՆՑՎԵԼ":
+                url.get(1).click();
+                break;
+            default:
+                System.out.println("Wrong buttonName: " + buttonName);
+        }
+    }
+
+    private String getDropdownMenuLink(int index) throws InterruptedException {
+        WebElement dropdownList = driver.findElement(By.cssSelector(".nav.navbar-nav.o_header_ul"));
+        List<WebElement> dropdownLi = dropdownList.findElements(By.tagName("li"));
+        List<WebElement> anchor = new ArrayList<WebElement>();
+        for (WebElement li : dropdownLi) {
+            for (WebElement anc : li.findElements(By.tagName("a"))) {
+                anchor.add(anc);
+
+            }
+        }
+        String href = anchor.get(index).getAttribute("href");
+        return href.equals("#") ? "Wrong output" : href;
+        //ATTENTION-WRONG LOOP
+    }
+}
